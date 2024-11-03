@@ -33,7 +33,7 @@ float clouds_cumulus_congestus_density(vec3 pos) {
 	if (r < clouds_cumulus_congestus_radius || r > clouds_cumulus_congestus_top_radius) return 0.0;
 
 	float altitude_fraction = (r - clouds_cumulus_congestus_radius) * rcp(clouds_cumulus_congestus_thickness);
-	float distance_fraction = linear_step(clouds_cumulus_congestus_distance, clouds_cumulus_congestus_end_distance, length(pos.xz));
+	//float distance_fraction = linear_step(clouds_cumulus_congestus_distance, clouds_cumulus_congestus_end_distance, length(pos.xz));  Adds the ring around the player
 
 	pos.xz += cameraPosition.xz * CLOUDS_SCALE + wind_velocity * (world_age + 50.0 * sqr(altitude_fraction));
 
@@ -42,7 +42,7 @@ float clouds_cumulus_congestus_density(vec3 pos) {
 
 	float density  = 1.2 * linear_step(0.2, 1.0, sqr(noise)) * linear_step(0.5, 0.75, clouds_cumulus_congestus_amount);
 	      density  = clouds_cumulus_congestus_altitude_shaping(density, altitude_fraction);
-		  density *= 4.0 * distance_fraction * (1.0 - distance_fraction);
+		  //density *= 4.0 * distance_fraction * (1.0 - distance_fraction); Remove the slash if you want it back
 
 	if (density < eps) return 0.0;
 
