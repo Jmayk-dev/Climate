@@ -103,7 +103,8 @@ vec2 clouds_cumulus_congestus_scattering(
 	float ground_optical_depth,
 	float step_transmittance,
 	float cos_theta,
-	float bounced_light
+	float bounced_light,
+        float altocumulus_shadow
 ) {
 	vec2 scattering = vec2(0.0);
 
@@ -118,7 +119,7 @@ vec2 clouds_cumulus_congestus_scattering(
 	vec3 phase_g = pow(vec3(0.6, 0.9, 0.3), vec3(1.0 + light_optical_depth));
 
 	for (uint i = 0u; i < 8u; ++i) {
-		scattering.x += scatter_amount * exp(-extinct_amount *  light_optical_depth * 0.33) * phase;
+		scattering.x += scatter_amount * exp(-extinct_amount *  light_optical_depth * 0.33) * phase * (1.0 - 0.8 * altocumulus_shadow);
 		scattering.x += scatter_amount * exp(-extinct_amount * ground_optical_depth * 0.33) * isotropic_phase * bounced_light;
 		scattering.y += scatter_amount * exp(-extinct_amount *    sky_optical_depth * 0.33) * isotropic_phase;
 
@@ -180,6 +181,7 @@ CloudsResult draw_cumulus_congestus_clouds(
 	// ------------------
 	//   Lighting Setup
 	// ------------------
+        float altocumulus_shadow = linear_step(0.5, 0.6, clouds_altocumulus_coverage.x) * dampen(day_factor);
 
 	bool moonlit = sun_dir.y < -0.04;
 	vec3 light_dir = moonlit ? moon_dir : sun_dir;
@@ -223,7 +225,8 @@ CloudsResult draw_cumulus_congestus_clouds(
 			ground_optical_depth,
 			step_transmittance,
 			cos_theta,
-			bounced_light
+			bounced_light,
+                        altocumulus_shadow
 		) * transmittance;
 
 		transmittance *= step_transmittance;
