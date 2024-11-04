@@ -4,6 +4,8 @@
 #include "/include/sky/atmosphere.glsl"
 
 uniform float biome_may_sandstorm;
+uniform float biome_may_mesastorm;
+uniform float biome_may_blizzard;
 
 vec3 get_rain_color() {
 	return mix(0.033, 0.66, smoothstep(-0.1, 0.5, sun_dir.y)) * sunlight_color * vec3(0.49, 0.65, 1.00);
@@ -19,6 +21,14 @@ vec3 get_snow_color() {
 
 vec3 get_sandstorm_color() {
 	return mix(0.033, 0.66, smoothstep(-0.1, 0.5, sun_dir.y)) * sunlight_color * vec3(1.00, 0.83, 0.60);
+}
+
+vec3 get_mesastorm_color(){
+	return mix(0.033, 0.66, smoothstep(-0.1, 0.5, sun_dir.y)) * sunlight_color * vec3(1.0,0.357,0.067);
+}
+
+vec3 get_blizzard_color() {
+	return mix(0.033, 1.60, smoothstep(-0.1, 0.5, sun_dir.y)) * sunlight_color * vec3(0.659,0.706,0.761);
 }
 
 vec3 get_weather_color() {
