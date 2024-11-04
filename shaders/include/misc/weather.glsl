@@ -200,6 +200,8 @@ void clouds_weather_variation(
 
 #ifdef WEATHER_FOG
 uniform float desert_sandstorm;
+uniform float mesa_sandstorm;
+uniform float snow_blizzard;
 
 mat2x3 air_fog_rayleigh_coeff() {
 	const vec3 rayleigh_normal = from_srgb(vec3(AIR_FOG_RAYLEIGH_R,        AIR_FOG_RAYLEIGH_G,        AIR_FOG_RAYLEIGH_B       )) * AIR_FOG_RAYLEIGH_DENSITY;
@@ -252,6 +254,28 @@ mat2x3 air_fog_mie_coeff() {
 
 	scattering_coeff += desert_sandstorm * (desert_sandstorm_density * desert_sandstorm_scattering);
 	extinction_coeff += desert_sandstorm * (desert_sandstorm_density * desert_sandstorm_extinction);
+#endif
+
+#ifdef MESA_SANDSTORM
+
+	const float mesa_sandstorm_density    = 0.1;
+	const float mesa_sandstorm_scattering = 0.5;
+	const vec3  mesa_sandstorm_extinction = vec3(0.1,0.32,0.3);
+
+	scattering_coeff += mesa_sandstorm * (mesa_sandstorm_density * mesa_sandstorm_scattering);
+	extinction_coeff += mesa_sandstorm * (mesa_sandstorm_density * mesa_sandstorm_extinction);
+#endif
+
+#ifdef SNOW_BLIZZARD
+
+
+    const float snow_blizzard_density  = 0.2;
+	const float snow_blizzard_scattering = 0.8;
+	const vec3  snow_blizzard_extinction = vec3(0.659,0.706,0.761);
+	
+	scattering_coeff += snow_blizzard * (snow_blizzard_density* snow_blizzard_scattering);
+	extinction_coeff += snow_blizzard * (snow_blizzard_density* snow_blizzard_extinction);
+
 #endif
 
 	return mat2x3(scattering_coeff, extinction_coeff);
