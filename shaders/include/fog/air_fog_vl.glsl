@@ -17,8 +17,8 @@ const vec2  air_fog_falloff_start     = vec2(AIR_FOG_RAYLEIGH_FALLOFF_START, AIR
 const vec2  air_fog_falloff_half_life = vec2(AIR_FOG_RAYLEIGH_FALLOFF_HALF_LIFE, AIR_FOG_MIE_FALLOFF_HALF_LIFE);
 
 vec2 air_fog_density(vec3 world_pos) {
-	const vec2 mul = -rcp(air_fog_falloff_half_life);
-	const vec2 add = -mul * air_fog_falloff_start;
+	const vec2 mul = rcp(air_fog_falloff_half_life); // - removed
+	const vec2 add = mul * air_fog_falloff_start;
 
 	vec2 density = exp2(min(world_pos.y * mul + add, 0.0));
 
