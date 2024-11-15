@@ -69,7 +69,7 @@ mat2x3 raymarch_air_fog(vec3 world_start_pos, vec3 world_end_pos, bool sky, floa
 	}
 
 #ifdef DISTANT_HORIZONS
-    float fog_end = float(dhRenderDistance);
+    float fog_end = far;
 #else
     float fog_end = far;
 #endif
