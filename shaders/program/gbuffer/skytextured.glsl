@@ -160,7 +160,7 @@ void main() {
 		break;
 #endif
 
-#ifdef CUSTOM_SKY
+#ifdef CUSTOM_SKY && defined WORLD_SPACE
 	case MC_RENDER_STAGE_CUSTOM_SKY:
 	 	// alpha of 4 <=> custom sky
 		scene_color.a = 4.0 / 255.0;
