@@ -8,6 +8,10 @@
 	#define attribute in
 #endif
 
+#if defined(WORLD_MOON) || defined(WORLD_MARS) || defined(WORLD_VENUS) || defined(WORLD_MERCURY)
+	#define WORLD_SPACE
+#endif
+
 // Common constants
 
 const float eps          = 1e-6;
