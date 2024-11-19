@@ -148,6 +148,11 @@ uniform sampler2DShadow shadowtex1;
 uniform sampler2D shadowtex0;
 uniform sampler2DShadow shadowtex1;
 #endif
+
+#ifdef WORLD_SPACE
+uniform sampler2D shadowtex0;
+uniform sampler2DShadow shadowtex1;
+#endif
 #endif
 
 uniform mat4 gbufferModelView;
