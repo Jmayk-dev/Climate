@@ -221,6 +221,11 @@ uniform sampler2DShadow shadowtex1;
 uniform sampler2D shadowtex0;
 uniform sampler2DShadow shadowtex1;
 #endif
+
+#ifdef WORLD_SPACE
+uniform sampler2D shadowtex0;
+uniform sampler2DShadow shadowtex1;
+#endif
 #endif
 
 uniform mat4 gbufferModelView;
@@ -604,7 +609,7 @@ void main() {
 	#define cloud_shadows 1.0
 #endif
 
-#if defined SHADOW && (defined WORLD_OVERWORLD || defined WORLD_END)
+#if defined SHADOW && (defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE)
 	float sss_depth;
 	float shadow_distance_fade;
 	vec3 shadows = calculate_shadows(position_scene, tbn[2], adjusted_light_levels.y, cloud_shadows, material.sss_amount, shadow_distance_fade, sss_depth);
@@ -637,7 +642,7 @@ void main() {
 
 	// Specular highlight
 
-#if (defined WORLD_OVERWORLD || defined WORLD_END) && !defined NO_NORMAL
+#if (defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE) && !defined NO_NORMAL
 	fragment_color.rgb += get_specular_highlight(material, NoL, NoV, NoH, LoV, LoH) * light_color * shadows * cloud_shadows;
 #endif
 
