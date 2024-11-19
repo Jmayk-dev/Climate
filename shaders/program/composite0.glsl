@@ -251,6 +251,8 @@ void main() {
 			mat2x3 fog = mat2x3(vec3(0.0), vec3(1.0));
 			#elif defined WORLD_END
 			mat2x3 fog = raymarch_end_fog(world_start_pos, world_end_pos, depth0 == 1.0, dither);
+			#else
+			mat2x3 fog = mat2x3(vec3(0.0), vec3(1.0));
 			#endif
 
 			fog_scattering    = fog[0];
