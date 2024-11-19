@@ -171,7 +171,7 @@ vec4 read_clouds(out float apparent_distance) {
 
 // http://www.diva-portal.org/smash/get/diva2:24136/FULLTEXT01.pdf
 vec3 purkinje_shift(vec3 rgb, vec2 light_levels) {
-#if !(defined PURKINJE_SHIFT && defined WORLD_OVERWORLD)
+#if !(defined PURKINJE_SHIFT && defined WORLD_OVERWORLD || defined WORLD_SPACE)
 	return rgb;
 #else
 	float purkinje_intensity  = 0.05 * PURKINJE_SHIFT_INTENSITY;
@@ -396,6 +396,8 @@ void main() {
 	bloomy_fog = spherical_fog(view_distance, nether_fog_start, nether_bloomy_fog_density) * 0.33 + 0.67;
 #elif defined WORLD_END
 	bloomy_fog = bloomy_fog * 0.5 + 0.5;
+#elif defined WORLD_SPACE
+	bloomy_fog = 1.0;
 #endif
 }
 
