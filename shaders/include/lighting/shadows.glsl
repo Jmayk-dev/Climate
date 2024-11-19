@@ -1,7 +1,7 @@
 #if !defined INCLUDE_LIGHTING_SHADOWS
 #define INCLUDE_LIGHTING_SHADOWS
 
-#if defined WORLD_OVERWORLD || defined WORLD_END
+#if defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE
 
 #include "/include/lighting/distortion.glsl"
 #include "/include/utility/color.glsl"
@@ -239,6 +239,12 @@ vec3 calculate_shadows(
 	if (NoL < 1e-3) return vec3(0.0); // now we can exit early for SSS blocks
 	if (blocker_search_result.x < eps) return vec3((1.0 - distance_fade) + distance_fade * distant_shadow); // blocker search empty handed => no occluders
 
+	#ifdef WORLD_SPACE
+	float penumbra_scale = SHADOW_PENUMBRA_SCALE * (1.0 + 2.0 * sss_amount);
+#else
+	const float penumbra_scale = SHADOW_PENUMBRA_SCALE * 16.0;
+#endif
+
 	float penumbra_size  = 16.0 * SHADOW_PENUMBRA_SCALE * (shadow_screen_pos.z - blocker_search_result.x) / blocker_search_result.x;
 	      penumbra_size *= 5.0 - 4.0 * cloud_shadows; // Increase penumbra radius inside cloud shadows, nice overcast look
 	      penumbra_size  = min(penumbra_size, SHADOW_BLOCKER_SEARCH_RADIUS);
@@ -246,6 +252,11 @@ vec3 calculate_shadows(
 #else
 	float penumbra_size = sqrt(0.5) * shadow_map_pixel_size * SHADOW_PENUMBRA_SCALE;
 
+	#ifdef WORLD_SPACE
+	      penumbra_size = penumbra_size * rcp(16.0) + penumbra_size * 7.0 * sss_amount;
+	#else
+	      penumbra_size *= 1.0 + 7.0 * sss_amount;
+	#endif
 	// Increase blur radius to approximate subsurface scattering
 	penumbra_size *= 1.0 + 7.0 * sss_amount;
 #endif
