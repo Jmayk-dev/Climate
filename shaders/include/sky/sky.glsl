@@ -287,6 +287,84 @@ vec3 draw_sky(vec3 ray_dir) {
 	return sky;
 }
 
+//----------------------------------------------------------------------------//
+#elif defined WORLD_SPACE
+
+#include "/include/lighting/colors/space_color.glsl"
+#include "/include/sky/atmosphere.glsl"
+
+const float sun_luminance  = 40.0;
+const float moon_luminance = 4.0;
+
+
+vec3 draw_sun(vec3 ray_dir) {
+	float nu = dot(ray_dir, moon_dir);
+
+	// Limb darkening model from http://www.physics.hmc.edu/faculty/esin/a101/limbdarkening.pdf
+	const vec3 alpha = vec3(0.429, 0.522, 0.614);
+	float center_to_edge = max0(sun_angular_radius - fast_acos(nu));
+	float limb_darkening = pow(1.0 - sqr(1.0 - center_to_edge), 0.25 * alpha);
+
+	return sun_luminance * light_color * step(0.0, center_to_edge) * limb_darkening;
+}
+
+
+vec3 draw_sky(vec3 ray_dir) {
+	vec3 sky = vec3(0.0);
+
+	// Sun and stars
+
+#if defined PROGRAM_DEFERRED4
+	vec4 vanilla_sky = texelFetch(colortex3, ivec2(gl_FragCoord.xy), 0);
+	vec3 vanilla_sky_color = from_srgb(vanilla_sky.rgb);
+	uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);
+
+#if defined SHADOW
+	// Trick to make stars rotate with sun and moon
+	mat3 rot = (sunAngle < 0.5)
+		? mat3(shadowModelViewInverse)
+		: mat3(-shadowModelViewInverse[0].xyz, shadowModelViewInverse[1].xyz, -shadowModelViewInverse[2].xyz);
+
+	vec3 celestial_dir = ray_dir * rot;
+#endif
+
+#if defined GALAXY
+	float galaxy_luminance;
+	sky += draw_galaxy(celestial_dir, galaxy_luminance);
+#else
+	const float galaxy_luminance = 0.0;
+#endif
+
+#if defined STARS
+		sky += draw_stars(celestial_dir, galaxy_luminance);
+#endif
+
+#if defined VANILLA_SUN
+	if (vanilla_sky_id == 2) {
+		const vec3 brightness_scale = sunlight_color * sun_luminance;
+		sky += vanilla_sky_color * sun_luminance;
+	}
+#else
+		sky += draw_sun(ray_dir);
+#endif
+
+	if (vanilla_sky_id == 3) {
+		const vec3 brightness_scale = sunlight_color * moon_luminance;
+		sky *= 0.0; // Hide stars behind moon
+		sky += vanilla_sky_color * brightness_scale;
+	}
+
+#if defined CUSTOM_SKY
+	if (vanilla_sky_id == 4) {
+		sky += vanilla_sky_color * CUSTOM_SKY_BRIGHTNESS;
+	}
+#endif
+#endif
+
+	return sky;
+}
+
 #endif
 
 #endif // INCLUDE_SKY_SKY
+
