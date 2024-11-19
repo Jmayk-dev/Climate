@@ -145,6 +145,10 @@ uniform float biome_humidity;
 #include "/include/lighting/colors/end_color.glsl"
 #endif
 
+#ifdef WORLD_SPACE
+#include "/include/lighting/colors/space_color.glsl"
+#endif
+
 #if defined WORLD_OVERWORLD
 vec3 get_ambient_color() {
 	sun_color  = get_sun_exposure() * get_sun_tint();
